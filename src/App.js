@@ -24,6 +24,7 @@ const App= () => {
   const initialBookState = { _id: null, title: '', author: '', pages: '',year:'',createdAt:'' }
   const [documents, setDocuments] = useState(initialBookState)
   const [editing, setEditing] = useState(false);
+  const [addbook, setAddbook] = useState(false);
   const [currentDocument, setCurrentDocument] = useState(initialFormState)
   //console.log("after call: ",documents);
 
@@ -33,6 +34,7 @@ const App= () => {
     await axios.post(apiBaseUrl+'/book',document);
     const resBook = await axios.get(apiBaseUrl+'/book');
     setDocuments(resBook.data)
+    setAddbook(false)
     //setDocuments([...documents, document])
   }
   // delete documents...
@@ -45,6 +47,7 @@ const App= () => {
   // set value for edit document form...
   const editDocument = document => {
     setEditing(true)
+    setAddbook(false)
     setCurrentDocument({ 
       _id: document._id, 
       title: document.title, 
@@ -53,6 +56,11 @@ const App= () => {
       year:document.year,
       createdAt:document.createdAt 
     })
+  }
+  // set value for add book form...
+  const addBook = () => {
+    setAddbook(true)
+    setEditing(false)
   }
   //  update document
   const updateDocument = async(id, updatedDocument) => {
@@ -81,13 +89,19 @@ const App= () => {
           </div>
         </div>
       ) : (
-        <div>
+        <div></div>
+      )}
+      {addbook ? (
+      <div>
         <h3 className="text-center">Add Book</h3>
         <div className="col-md-8 col-md-offset-2">
           <AddDocument addDocument={addDocument} />
         </div>
         </div>
-      )}
+      ):(
+        <div></div>
+      )
+      }
         
         
 
@@ -95,8 +109,9 @@ const App= () => {
       </div>
       <div className="row">
         <h3 className="text-center">Book List</h3>
+        <div><button onClick={addBook} variant="contained" style={{float: 'right'}} className="btn btn-default float-center">Add Book</button></div>
         <div className="col-md-6 col-md-offset-3">
-          <DocumentList documents={documents} editDocument={editDocument}  deleteDocument={deleteDocument}/>
+        <DocumentList documents={documents} editDocument={editDocument}  deleteDocument={deleteDocument}/>
         </div>
       </div>
     </div>
